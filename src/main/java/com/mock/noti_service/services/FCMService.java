@@ -3,12 +3,10 @@ package com.mock.noti_service.services;
 import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
-
 import com.mock.noti_service.model.PushNotificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
 import com.google.firebase.messaging.AndroidConfig;
 import com.google.firebase.messaging.AndroidNotification;
 import com.google.firebase.messaging.ApnsConfig;
@@ -37,7 +35,6 @@ public class FCMService {
         return FirebaseMessaging.getInstance().sendAsync(message).get();
     }
 
-
     private AndroidConfig getAndroidConfig(String topic) {
         return AndroidConfig.builder()
                 .setTtl(Duration.ofMinutes(2).toMillis()).setCollapseKey(topic)
@@ -45,22 +42,27 @@ public class FCMService {
                 .setNotification(AndroidNotification.builder()
                         .setTag(topic).setChannelId("test").build()).build();
     }
+
     private ApnsConfig getApnsConfig(String topic) {
         return ApnsConfig.builder()
                 .setAps(Aps.builder().setCategory(topic).setThreadId(topic).build()).build();
     }
+
     private Message getPreconfiguredMessageToToken(PushNotificationRequest request) {
         return getPreconfiguredMessageBuilder(request).setToken(request.getToken())
                 .build();
     }
+
     private Message getPreconfiguredMessageWithoutData(PushNotificationRequest request) {
         return getPreconfiguredMessageBuilder(request).setTopic(request.getTopic())
                 .build();
     }
+
     private Message getPreconfiguredMessageWithData(Map<String, String> data, PushNotificationRequest request) {
         return getPreconfiguredMessageBuilder(request).putAllData(data).setToken(request.getToken())
                 .build();
     }
+
     private Message.Builder getPreconfiguredMessageBuilder(PushNotificationRequest request) {
         AndroidConfig androidConfig = getAndroidConfig(request.getTopic());
         ApnsConfig apnsConfig = getApnsConfig(request.getTopic());
